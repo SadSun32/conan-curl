@@ -6,8 +6,9 @@ class CurlConan(ConanFile):
     version = "7.65.0"
     author = "Ralph-Gordon Paul (gordon@rgpaul.com)"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "android_ndk": "ANY", "android_stl_type":["c++_static", "c++_shared"]}
-    default_options = "shared=False", "android_ndk=None", "android_stl_type=c++_static"
+    options = {"shared": [True, False], "with_ldap":[True, False], "android_ndk": "ANY", 
+        "android_stl_type":["c++_static", "c++_shared"]}
+    default_options = "shared=False", "with_ldap=False", "android_ndk=None", "android_stl_type=c++_static"
     description = "command line tool and library for transferring data with URLs"
     url = "https://github.com/Manromen/conan-curl-scripts"
     license = "curl"
@@ -49,6 +50,8 @@ class CurlConan(ConanFile):
 
         if self.settings.os == "Macos":
             cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
+
+        cmake.definitions["CURL_DISABLE_LDAP"] = not self.options.with_ldap
 
         cmake.configure(source_folder=library_folder)
         cmake.build()

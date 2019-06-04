@@ -88,7 +88,7 @@ function createConanPackage()
     conan create . curl/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Android \
         -s os.api_level=${api_level} -s compiler=${TOOLCHAIN_VERSION} -s compiler.version=${COMPILER_VERSION} \
         -s compiler.libcxx=${COMPILER_LIBCXX} -s build_type=${build_type} -o android_ndk=${NDK_VERSION} \
-        -o android_stl_type=${STL_TYPE} -s arch=${arch} -o shared=False
+        -o android_stl_type=${STL_TYPE} -s arch=${arch} -o shared=False -o with_ldap=False
 }
 
 #=======================================================================================================================

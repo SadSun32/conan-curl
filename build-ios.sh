@@ -38,7 +38,7 @@ function createConanPackage()
     local build_type=$2
 
     conan create . curl/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=iOS \
-        -s os.version=${IOS_SDK_VERSION} -s arch=${arch} -s build_type=${build_type} -o shared=False
+        -s os.version=${IOS_SDK_VERSION} -s arch=${arch} -s build_type=${build_type} -o shared=False -o with_ldap=False
 }
 
 #=======================================================================================================================
