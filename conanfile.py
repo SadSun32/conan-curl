@@ -21,9 +21,12 @@ class CurlConan(ConanFile):
         tools.get(url)
 
         tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
-            "include(Utilities)",
+            "project(CURL C)",
             '''include(${CMAKE_BINARY_DIR}/conan_paths.cmake) 
-            include(Utilities)''')
+            set(OPENSSL_ROOT_DIR ${CONAN_LIBRESSL_ROOT}) 
+            set(OPENSSL_USE_STATIC_LIBS TRUE) 
+            message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}") 
+            project(CURL C)''')
 
     # compile using cmake
     def build(self):
@@ -32,10 +35,14 @@ class CurlConan(ConanFile):
         cmake.verbose = True
 
         if self.settings.os == "Android":
-            cmake.definitions["CMAKE_SYSTEM_VERSION"] = self.settings.os.api_level
-            cmake.definitions["CMAKE_ANDROID_NDK"] = os.environ["ANDROID_NDK_PATH"]
-            cmake.definitions["CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION"] = self.settings.compiler
-            cmake.definitions["CMAKE_ANDROID_STL_TYPE"] = self.options.android_stl_type
+            android_toolchain = os.environ["ANDROID_NDK_PATH"] + "/build/cmake/android.toolchain.cmake"
+            cmake.definitions["CMAKE_SYSTEM_NAME"] = "Android"
+            cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = android_toolchain
+            cmake.definitions["ANDROID_NDK"] = os.environ["ANDROID_NDK_PATH"]
+            cmake.definitions["ANDROID_ABI"] = tools.to_android_abi(self.settings.arch)
+            cmake.definitions["ANDROID_STL"] = self.options.android_stl_type
+            cmake.definitions["ANDROID_NATIVE_API_LEVEL"] = self.settings.os.api_level
+            cmake.definitions["ANDROID_TOOLCHAIN"] = "clang"
 
         if self.settings.os == "iOS":
             ios_toolchain = "cmake-modules/Toolchains/ios.toolchain.cmake"
@@ -67,6 +74,12 @@ class CurlConan(ConanFile):
         
     def requirements(self):
         self.requires("libressl/2.9.2@%s/%s" % (self.user, self.channel))
+
+    def configure(self):
+        if self.settings.os == "Android":
+            self.options["libressl"].shared = self.options.shared
+            self.options["libressl"].android_stl_type = self.options.android_stl_type
+            self.options["libressl"].android_ndk = self.options.android_ndk
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)

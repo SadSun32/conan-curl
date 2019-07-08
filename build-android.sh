@@ -77,6 +77,33 @@ function getAndroidNdkVersion()
 }
 
 #=======================================================================================================================
+
+function getCompilerVersion()
+{
+    case "${NDK_VERSION}" in
+        "r16b")
+            COMPILER_VERSION=5.0
+            ;;
+        "r17c")
+            COMPILER_VERSION=6.0
+            ;;
+        "r18b")
+            COMPILER_VERSION=7.0
+            ;;
+        "r19c")
+            COMPILER_VERSION=8.0
+            ;;
+        "r20")
+            COMPILER_VERSION=8.0
+            ;;
+            
+        *)
+            echo "Unknown Compiler version for Android NDK ${NDK_VERSION}"
+            exit 1
+    esac
+}
+
+#=======================================================================================================================
 # create conan package
 
 function createConanPackage()
@@ -95,6 +122,7 @@ function createConanPackage()
 # create packages for all architectures and build types
 
 getAndroidNdkVersion
+getCompilerVersion
 
 createConanPackage armv7 19 Release
 createConanPackage armv7 19 Debug
