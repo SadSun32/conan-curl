@@ -3,7 +3,7 @@ import os
 
 class CurlConan(ConanFile):
     name = "curl"
-    version = "7.65.0"
+    version = "7.65.3"
     author = "Ralph-Gordon Paul (gordon@rgpaul.com)"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "with_ldap":[True, False], "android_ndk": "ANY", 
@@ -33,6 +33,7 @@ class CurlConan(ConanFile):
         cmake = CMake(self)
         library_folder = "%s/curl-%s" % (self.source_folder, self.version)
         cmake.verbose = True
+        variants = []
 
         if self.settings.os == "Android":
             android_toolchain = os.environ["ANDROID_NDK_PATH"] + "/build/cmake/android.toolchain.cmake"
@@ -50,8 +51,25 @@ class CurlConan(ConanFile):
             cmake.definitions["BUILD_TESTING"] = "OFF"
             cmake.definitions["BUILD_CURL_EXE"] = "OFF"
             cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
-            if self.settings.arch == "x86" or self.settings.arch == "x86_64":
+            
+            # define all architectures for ios fat library
+            if "arm" in self.settings.arch:
+                variants = ["armv7", "armv7s", "armv8"]
+
+            # apply build config for all defined architectures
+            if len(variants) > 0:
+                archs = ""
+                for i in range(0, len(variants)):
+                    if i == 0:
+                        archs = tools.to_apple_arch(variants[i])
+                    else:
+                        archs += ";" + tools.to_apple_arch(variants[i])
+                cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = archs
+
+            if self.settings.arch == "x86":
                 cmake.definitions["IOS_PLATFORM"] = "SIMULATOR"
+            elif self.settings.arch == "x86_64":
+                cmake.definitions["IOS_PLATFORM"] = "SIMULATOR64"
             else:
                 cmake.definitions["IOS_PLATFORM"] = "OS"
 
@@ -62,7 +80,13 @@ class CurlConan(ConanFile):
 
         cmake.configure(source_folder=library_folder)
         cmake.build()
-        cmake.install()
+
+        # execute ranlib for all static universal libraries (required for fat libraries)
+        if self.settings.os == "iOS" and len(variants) > 0:
+            if self.options.shared == False:
+                for f in os.listdir(self.build_folder):
+                    if f.endswith(".a") and os.path.isfile(os.path.join(self.build_folder,f)) and not os.path.islink(os.path.join(self.build_folder,f)):
+                        self.run("xcrun ranlib %s" % os.path.join(self.build_folder,f))
 
     def package(self):
         self.copy("*", dst="include", src='include')
@@ -84,6 +108,10 @@ class CurlConan(ConanFile):
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
         self.cpp_info.includedirs = ['include']
+
+    def package_id(self):
+        if "arm" in self.settings.arch and self.settings.os == "iOS":
+            self.info.settings.arch = "AnyARM"
 
     def config_options(self):
         # remove android specific option for all other platforms
