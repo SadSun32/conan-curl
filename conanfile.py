@@ -22,11 +22,11 @@ class CurlConan(ConanFile):
 
         tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
             "project(CURL C)",
-            '''include(${CMAKE_BINARY_DIR}/conan_paths.cmake) 
-            set(OPENSSL_ROOT_DIR ${CONAN_LIBRESSL_ROOT}) 
-            set(OPENSSL_USE_STATIC_LIBS TRUE) 
-            message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}") 
-            project(CURL C)''')
+            '''project(CURL C)
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake) 
+set(OPENSSL_ROOT_DIR ${CONAN_LIBRESSL_ROOT}) 
+message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}") 
+''')
 
     # compile using cmake
     def build(self):
@@ -37,13 +37,17 @@ class CurlConan(ConanFile):
 
         if self.settings.os == "Android":
             android_toolchain = os.environ["ANDROID_NDK_PATH"] + "/build/cmake/android.toolchain.cmake"
-            cmake.definitions["CMAKE_SYSTEM_NAME"] = "Android"
             cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = android_toolchain
             cmake.definitions["ANDROID_NDK"] = os.environ["ANDROID_NDK_PATH"]
             cmake.definitions["ANDROID_ABI"] = tools.to_android_abi(self.settings.arch)
             cmake.definitions["ANDROID_STL"] = self.options.android_stl_type
             cmake.definitions["ANDROID_NATIVE_API_LEVEL"] = self.settings.os.api_level
             cmake.definitions["ANDROID_TOOLCHAIN"] = "clang"
+            cmake.definitions["BUILD_TESTING"] = "OFF"
+            cmake.definitions["BUILD_CURL_EXE"] = "OFF"
+            tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
+                "find_package(OpenSSL", "find_host_package(OpenSSL")
+            self.addFindHostPackage()
 
         if self.settings.os == "iOS":
             ios_toolchain = "cmake-modules/Toolchains/ios.toolchain.cmake"
@@ -51,6 +55,8 @@ class CurlConan(ConanFile):
             cmake.definitions["BUILD_TESTING"] = "OFF"
             cmake.definitions["BUILD_CURL_EXE"] = "OFF"
             cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
+            tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
+                "find_package(OpenSSL", "find_host_package(OpenSSL")
             
             # define all architectures for ios fat library
             if "arm" in self.settings.arch:
@@ -97,7 +103,25 @@ class CurlConan(ConanFile):
     #     self.copy("*.so", dst="lib", src='lib', keep_path=False)
     #     self.copy("*.dylib", dst="lib", src='lib', keep_path=False)
     #     self.copy("*.a", dst="lib", src='lib', keep_path=False)
-        
+
+    def addFindHostPackage(self):
+        tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
+            "project(CURL C)",
+            '''project(CURL C)
+# This macro lets you find executable programs on the host system
+macro (find_host_package)
+    set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+    set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
+    set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
+
+    find_package(${ARGN})
+
+    set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
+    set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+    set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+endmacro (find_host_package)
+''')
+
     def requirements(self):
         self.requires("libressl/2.9.2@%s/%s" % (self.user, self.channel))
 
