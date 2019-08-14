@@ -80,21 +80,23 @@ class CurlConan(ConanFile):
 
         cmake.configure(source_folder=library_folder)
         cmake.build()
+        cmake.install()
 
         # execute ranlib for all static universal libraries (required for fat libraries)
-        if self.settings.os == "iOS" and len(variants) > 0:
-            if self.options.shared == False:
-                for f in os.listdir(self.build_folder):
-                    if f.endswith(".a") and os.path.isfile(os.path.join(self.build_folder,f)) and not os.path.islink(os.path.join(self.build_folder,f)):
-                        self.run("xcrun ranlib %s" % os.path.join(self.build_folder,f))
+        if self.settings.os == "iOS" and len(variants) > 0 and not self.options.shared:
+            lib_dir = os.path.join(self.package_folder, "lib")
+            for f in os.listdir(lib_dir):
+                if f.endswith(".a") and os.path.isfile(os.path.join(lib_dir,f)) and not os.path.islink(os.path.join(lib_dir,f)):
+                    self.run("xcrun ranlib %s" % os.path.join(lib_dir,f))
 
-    def package(self):
-        self.copy("*", dst="include", src='include')
-        self.copy("*.lib", dst="lib", src='lib', keep_path=False)
-        self.copy("*.dll", dst="bin", src='bin', keep_path=False)
-        self.copy("*.so", dst="lib", src='lib', keep_path=False)
-        self.copy("*.dylib", dst="lib", src='lib', keep_path=False)
-        self.copy("*.a", dst="lib", src='lib', keep_path=False)
+        # we don't need package because the cmake.install() will direkly install all files into the package folder
+    # def package(self):
+    #     self.copy("*", dst="include", src='include')
+    #     self.copy("*.lib", dst="lib", src='lib', keep_path=False)
+    #     self.copy("*.dll", dst="bin", src='bin', keep_path=False)
+    #     self.copy("*.so", dst="lib", src='lib', keep_path=False)
+    #     self.copy("*.dylib", dst="lib", src='lib', keep_path=False)
+    #     self.copy("*.a", dst="lib", src='lib', keep_path=False)
         
     def requirements(self):
         self.requires("libressl/2.9.2@%s/%s" % (self.user, self.channel))
