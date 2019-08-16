@@ -2,8 +2,8 @@
 
 This repository contains the conan receipe that is used to build the curl packages at [rgpaul bintray](https://bintray.com/manromen/rgpaul).
 
-For Infos about curl please visit [curl.haxx.se](https://curl.haxx.se/).
-The library is licensed under the [curl License](https://curl.haxx.se/docs/copyright.html).
+For Infos about curl please visit [curl.haxx.se](https://curl.haxx.se/).  
+The library is licensed under the [curl License](https://curl.haxx.se/docs/copyright.html).  
 This repository is licensed under the [MIT License](LICENSE).
 
 ## Android
