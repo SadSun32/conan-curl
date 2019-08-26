@@ -9,7 +9,7 @@ class CurlConan(ConanFile):
     options = {"shared": [True, False], "with_ldap":[True, False], "android_ndk": "ANY", 
         "android_stl_type":["c++_static", "c++_shared"]}
     default_options = "shared=False", "with_ldap=False", "android_ndk=None", "android_stl_type=c++_static"
-    description = "command line tool and library for transferring data with URLs"
+    description = "Command line tool and library for transferring data with URLs"
     url = "https://github.com/Manromen/conan-curl-scripts"
     license = "curl"
     exports_sources = "cmake-modules/*"
@@ -83,17 +83,11 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
             cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
 
         cmake.definitions["CURL_DISABLE_LDAP"] = not self.options.with_ldap
+        cmake.definitions["BUILD_SHARED_LIBS"] = "ON" if self.options.shared else "OFF"
 
         cmake.configure(source_folder=library_folder)
         cmake.build()
         cmake.install()
-
-        # execute ranlib for all static universal libraries (required for fat libraries)
-        if self.settings.os == "iOS" and len(variants) > 0 and not self.options.shared:
-            lib_dir = os.path.join(self.package_folder, "lib")
-            for f in os.listdir(lib_dir):
-                if f.endswith(".a") and os.path.isfile(os.path.join(lib_dir,f)) and not os.path.islink(os.path.join(lib_dir,f)):
-                    self.run("xcrun ranlib %s" % os.path.join(lib_dir,f))
 
         # we don't need package because the cmake.install() will direkly install all files into the package folder
     # def package(self):
