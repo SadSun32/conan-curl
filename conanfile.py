@@ -60,7 +60,7 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
             
             # define all architectures for ios fat library
             if "arm" in self.settings.arch:
-                variants = ["armv7", "armv7s", "armv8"]
+                variants = ["armv7", "armv7s", "armv8", "armv8.3"]
 
             # apply build config for all defined architectures
             if len(variants) > 0:
@@ -70,7 +70,7 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
                         archs = tools.to_apple_arch(variants[i])
                     else:
                         archs += ";" + tools.to_apple_arch(variants[i])
-                cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = archs
+                cmake.definitions["ARCHS"] = archs
 
             if self.settings.arch == "x86":
                 cmake.definitions["IOS_PLATFORM"] = "SIMULATOR"
