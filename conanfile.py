@@ -3,14 +3,13 @@ import os
 
 class CurlConan(ConanFile):
     name = "curl"
-    version = "7.65.3"
     author = "Ralph-Gordon Paul (gordon@rgpaul.com)"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "with_ldap":[True, False], "android_ndk": "ANY", 
         "android_stl_type":["c++_static", "c++_shared"]}
     default_options = "shared=False", "with_ldap=False", "android_ndk=None", "android_stl_type=c++_static"
     description = "Command line tool and library for transferring data with URLs"
-    url = "https://github.com/Manromen/conan-curl-scripts"
+    url = "https://github.com/RGPaul/conan-curl-scripts"
     license = "curl"
     exports_sources = "cmake-modules/*"
     generators = "cmake_paths"
@@ -33,7 +32,6 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
         cmake = CMake(self)
         library_folder = "%s/curl-%s" % (self.source_folder, self.version)
         cmake.verbose = True
-        variants = []
 
         if self.settings.os == "Android":
             android_toolchain = os.environ["ANDROID_NDK_PATH"] + "/build/cmake/android.toolchain.cmake"
@@ -54,30 +52,22 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
             cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = ios_toolchain
             cmake.definitions["BUILD_TESTING"] = "OFF"
             cmake.definitions["BUILD_CURL_EXE"] = "OFF"
-            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
+            #cmake.definitions["PICKY_COMPILER"] = "OFF"
             tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
                 "find_package(OpenSSL", "find_host_package(OpenSSL")
             
             # define all architectures for ios fat library
             if "arm" in self.settings.arch:
-                variants = ["armv7", "armv7s", "armv8", "armv8.3"]
-
-            # apply build config for all defined architectures
-            if len(variants) > 0:
-                archs = ""
-                for i in range(0, len(variants)):
-                    if i == 0:
-                        archs = tools.to_apple_arch(variants[i])
-                    else:
-                        archs += ";" + tools.to_apple_arch(variants[i])
-                cmake.definitions["ARCHS"] = archs
+                cmake.definitions["ARCHS"] = "armv7;armv7s;arm64;arm64e"
+            else:
+                cmake.definitions["ARCHS"] = tools.to_apple_arch(self.settings.arch)
 
             if self.settings.arch == "x86":
-                cmake.definitions["IOS_PLATFORM"] = "SIMULATOR"
+                cmake.definitions["PLATFORM"] = "SIMULATOR"
             elif self.settings.arch == "x86_64":
-                cmake.definitions["IOS_PLATFORM"] = "SIMULATOR64"
+                cmake.definitions["PLATFORM"] = "SIMULATOR64"
             else:
-                cmake.definitions["IOS_PLATFORM"] = "OS"
+                cmake.definitions["PLATFORM"] = "OS"
 
         if self.settings.os == "Macos":
             cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
