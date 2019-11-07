@@ -34,43 +34,16 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
         cmake.verbose = True
 
         if self.settings.os == "Android":
-            android_toolchain = os.environ["ANDROID_NDK_PATH"] + "/build/cmake/android.toolchain.cmake"
-            cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = android_toolchain
-            cmake.definitions["ANDROID_NDK"] = os.environ["ANDROID_NDK_PATH"]
-            cmake.definitions["ANDROID_ABI"] = tools.to_android_abi(self.settings.arch)
-            cmake.definitions["ANDROID_STL"] = self.options.android_stl_type
-            cmake.definitions["ANDROID_NATIVE_API_LEVEL"] = self.settings.os.api_level
-            cmake.definitions["ANDROID_TOOLCHAIN"] = "clang"
-            cmake.definitions["BUILD_TESTING"] = "OFF"
-            cmake.definitions["BUILD_CURL_EXE"] = "OFF"
-            tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
-                "find_package(OpenSSL", "find_host_package(OpenSSL")
-            self.addFindHostPackage()
+            self.applyCmakeSettingsForAndroid(cmake)
 
         if self.settings.os == "iOS":
-            ios_toolchain = "cmake-modules/Toolchains/ios.toolchain.cmake"
-            cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = ios_toolchain
-            cmake.definitions["BUILD_TESTING"] = "OFF"
-            cmake.definitions["BUILD_CURL_EXE"] = "OFF"
-            #cmake.definitions["PICKY_COMPILER"] = "OFF"
-            tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
-                "find_package(OpenSSL", "find_host_package(OpenSSL")
-            
-            # define all architectures for ios fat library
-            if "arm" in self.settings.arch:
-                cmake.definitions["ARCHS"] = "armv7;armv7s;arm64;arm64e"
-            else:
-                cmake.definitions["ARCHS"] = tools.to_apple_arch(self.settings.arch)
-
-            if self.settings.arch == "x86":
-                cmake.definitions["PLATFORM"] = "SIMULATOR"
-            elif self.settings.arch == "x86_64":
-                cmake.definitions["PLATFORM"] = "SIMULATOR64"
-            else:
-                cmake.definitions["PLATFORM"] = "OS"
+            self.applyCmakeSettingsForiOS(cmake)
 
         if self.settings.os == "Macos":
-            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
+            self.applyCmakeSettingsFormacOS(cmake)
+
+        if self.settings.os == "Windows":
+            self.applyCmakeSettingsForWindows(cmake)
 
         cmake.definitions["CURL_DISABLE_LDAP"] = not self.options.with_ldap
         cmake.definitions["BUILD_SHARED_LIBS"] = "ON" if self.options.shared else "OFF"
@@ -79,14 +52,56 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
         cmake.build()
         cmake.install()
 
-        # we don't need package because the cmake.install() will direkly install all files into the package folder
-    # def package(self):
-    #     self.copy("*", dst="include", src='include')
-    #     self.copy("*.lib", dst="lib", src='lib', keep_path=False)
-    #     self.copy("*.dll", dst="bin", src='bin', keep_path=False)
-    #     self.copy("*.so", dst="lib", src='lib', keep_path=False)
-    #     self.copy("*.dylib", dst="lib", src='lib', keep_path=False)
-    #     self.copy("*.a", dst="lib", src='lib', keep_path=False)
+    def applyCmakeSettingsForAndroid(self, cmake):
+        android_toolchain = os.environ["ANDROID_NDK_PATH"] + "/build/cmake/android.toolchain.cmake"
+        cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = android_toolchain
+        cmake.definitions["ANDROID_NDK"] = os.environ["ANDROID_NDK_PATH"]
+        cmake.definitions["ANDROID_ABI"] = tools.to_android_abi(self.settings.arch)
+        cmake.definitions["ANDROID_STL"] = self.options.android_stl_type
+        cmake.definitions["ANDROID_NATIVE_API_LEVEL"] = self.settings.os.api_level
+        cmake.definitions["ANDROID_TOOLCHAIN"] = "clang"
+        cmake.definitions["BUILD_TESTING"] = "OFF"
+        cmake.definitions["BUILD_CURL_EXE"] = "OFF"
+        tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
+            "find_package(OpenSSL", "find_host_package(OpenSSL")
+        self.addFindHostPackage()
+
+    def applyCmakeSettingsForiOS(self, cmake):
+        ios_toolchain = "cmake-modules/Toolchains/ios.toolchain.cmake"
+        cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = ios_toolchain
+        cmake.definitions["BUILD_TESTING"] = "OFF"
+        cmake.definitions["BUILD_CURL_EXE"] = "OFF"
+        #cmake.definitions["PICKY_COMPILER"] = "OFF"
+        tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
+            "find_package(OpenSSL", "find_host_package(OpenSSL")
+        
+        # define all architectures for ios fat library
+        if "arm" in self.settings.arch:
+            cmake.definitions["ARCHS"] = "armv7;armv7s;arm64;arm64e"
+        else:
+            cmake.definitions["ARCHS"] = tools.to_apple_arch(self.settings.arch)
+
+        if self.settings.arch == "x86":
+            cmake.definitions["PLATFORM"] = "SIMULATOR"
+        elif self.settings.arch == "x86_64":
+            cmake.definitions["PLATFORM"] = "SIMULATOR64"
+        else:
+            cmake.definitions["PLATFORM"] = "OS"
+
+    def applyCmakeSettingsFormacOS(self, cmake):
+        cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
+
+    def applyCmakeSettingsForWindows(self, cmake):
+        cmake.definitions["CMAKE_BUILD_TYPE"] = self.settings.build_type
+        if self.settings.compiler == "Visual Studio":
+            # check that runtime flags and build_type correspond (consistency check)
+            if "d" not in self.settings.compiler.runtime and self.settings.build_type == "Debug":
+                raise Exception("Compiling for Debug mode but compiler runtime does not contain 'd' flag.")
+
+            if self.settings.build_type == "Debug":
+                cmake.definitions["CMAKE_CXX_FLAGS_DEBUG"] = "/%s" % self.settings.compiler.runtime
+            elif self.settings.build_type == "Release":
+                cmake.definitions["CMAKE_CXX_FLAGS_RELEASE"] = "/%s" % self.settings.compiler.runtime
 
     def addFindHostPackage(self):
         tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
