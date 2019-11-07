@@ -20,9 +20,12 @@
 
 set -e
 
+declare ARCH=$1
+declare BUILD_TYPE=$2
+
 if [ "${GITHUB_OS_NAME}" == "linux" ]; then
     source ~/.profile
 fi
 
-conan create . curl/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Linux -s arch=x86_64 -s build_type=Release -o shared=False;
-conan create . curl/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Linux -s arch=x86_64 -s build_type=Debug -o shared=False;
+conan create . curl/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Linux -s arch=$ARCH \
+    -s build_type=$BUILD_TYPE -o shared=False;

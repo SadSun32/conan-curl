@@ -1,6 +1,10 @@
 # Conan curl
 
-![GitHub Actions status | rgpaul/conan-curl-scripts](https://github.com/rgpaul/conan-curl-scripts/workflows/build/badge.svg)
+![Android status](https://github.com/rgpaul/conan-curl-scripts/workflows/Android/badge.svg)
+![iOS status](https://github.com/rgpaul/conan-curl-scripts/workflows/iOS/badge.svg)
+![Linux status](https://github.com/rgpaul/conan-curl-scripts/workflows/Linux/badge.svg)
+![macOS status](https://github.com/rgpaul/conan-curl-scripts/workflows/macOS/badge.svg)
+![Windows status](https://github.com/rgpaul/conan-curl-scripts/workflows/Windows/badge.svg)
 
 This repository contains the conan receipe that is used to build the curl packages at [rgpaul bintray](https://bintray.com/manromen/rgpaul).
 

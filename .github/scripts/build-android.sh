@@ -33,6 +33,10 @@ declare COMPILER_LIBCXX=libc++
 declare STL_TYPE=c++_static
 declare ANDROID_NDK_PATH=$ANDROID_SDK_ROOT/ndk-bundle
 
+declare ARCH=$1
+declare API_LEVEL=$2
+declare BUILD_TYPE=$3
+
 echo "using NDK Path: ${ANDROID_NDK_PATH}"
 export ANDROID_NDK_PATH=${ANDROID_NDK_PATH}
 
@@ -125,12 +129,4 @@ function createConanPackage()
 getAndroidNdkVersion
 getCompilerVersion
 
-createConanPackage armv7 19 Release
-createConanPackage armv7 19 Debug
-createConanPackage armv8 21 Release
-createConanPackage armv8 21 Debug
-createConanPackage x86 19 Release
-createConanPackage x86 19 Debug
-createConanPackage x86_64 21 Release
-createConanPackage x86_64 21 Debug
-
+createConanPackage $ARCH $API_LEVEL $BUILD_TYPE

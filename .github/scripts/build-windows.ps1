@@ -18,6 +18,11 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # ----------------------------------------------------------------------------------------------------------------------
 
+param(
+    [string]$ARCH,
+    [string]$BUILD_TYPE
+)
+
 #=======================================================================================================================
 # create conan package
 
@@ -37,8 +42,4 @@ function createConanPackage($arch, $build_type)
 #=======================================================================================================================
 # create packages for all architectures and build types
 
-createConanPackage "x86_64" "Release"
-createConanPackage "x86_64" "Debug"
-
-createConanPackage "x86" "Release"
-createConanPackage "x86" "Debug"
+createConanPackage $ARCH $BUILD_TYPE

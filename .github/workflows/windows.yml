@@ -1,4 +1,4 @@
-name: build
+name: Windows
 
 env:
   BINTRAY_USER: manromen
@@ -12,90 +12,8 @@ on:
     ref_type: tag
 
 jobs:
-  # build for android
-  build_android:
-    runs-on: ubuntu-18.04
-    env:
-      GITHUB_OS_NAME: linux
-      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
-    steps:
-    - uses: actions/checkout@master
-      with:
-        submodules: true
-        ref: ${{ github.sha }}
-    - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
-    - name: install and setup conan
-      run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: create conan packages
-      run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh
-    - name: deploy conan packages
-      run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
 
-  # build for ios
-  build_ios:
-    runs-on: macOS-latest
-    env:
-      GITHUB_OS_NAME: macos
-      DEVELOPER_DIR: /Applications/Xcode_11.1.app/Contents/Developer
-      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
-    steps:
-    - uses: actions/checkout@master
-      with:
-        submodules: true
-        ref: ${{ github.sha }}
-    - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
-    - name: install and setup conan
-      run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: create conan packages
-      run: ${GITHUB_WORKSPACE}/.github/scripts/build-ios.sh
-    - name: deploy conan packages
-      run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-
-  # build for linux
-  build_linux:
-    runs-on: ubuntu-18.04
-    env:
-      GITHUB_OS_NAME: linux
-      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
-    steps:
-    - uses: actions/checkout@master
-      with:
-        submodules: true
-        ref: ${{ github.sha }}
-    - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
-    - name: install and setup conan
-      run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: create conan packages
-      run: ${GITHUB_WORKSPACE}/.github/scripts/build-linux.sh
-    - name: deploy conan packages
-      run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-
-  # build for macOS
-  build_macos:
-    runs-on: macOS-latest
-    env:
-      GITHUB_OS_NAME: macos
-      DEVELOPER_DIR: /Applications/Xcode_11.1.app/Contents/Developer
-      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
-    steps:
-    - uses: actions/checkout@master
-      with:
-        submodules: true
-        ref: ${{ github.sha }}
-    - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
-    - name: install and setup conan
-      run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: create conan packages
-      run: ${GITHUB_WORKSPACE}/.github/scripts/build-macos.sh
-    - name: deploy conan packages
-      run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-
-  # build for windows
-  build_windows:
+  x86_64-Release:
     runs-on: windows-2019
     env:
       GITHUB_OS_NAME: windows
@@ -112,7 +30,76 @@ jobs:
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-setup.ps1
       shell: powershell
     - name: create conan packages
-      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\build-windows.ps1
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\build-windows.ps1 -ARCH x86_64 -BUILD_TYPE Release
+      shell: powershell
+    - name: deploy conan packages
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-deploy.ps1
+      shell: powershell
+
+  x86_64-Debug:
+    runs-on: windows-2019
+    env:
+      GITHUB_OS_NAME: windows
+      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
+    steps:
+    - uses: actions/checkout@master
+      with:
+        submodules: true
+        ref: ${{ github.sha }}
+    - name: get version from tag
+      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      shell: bash
+    - name: install and setup conan
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-setup.ps1
+      shell: powershell
+    - name: create conan packages
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\build-windows.ps1 -ARCH x86_64 -BUILD_TYPE Debug
+      shell: powershell
+    - name: deploy conan packages
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-deploy.ps1
+      shell: powershell
+
+  x86-Release:
+    runs-on: windows-2019
+    env:
+      GITHUB_OS_NAME: windows
+      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
+    steps:
+    - uses: actions/checkout@master
+      with:
+        submodules: true
+        ref: ${{ github.sha }}
+    - name: get version from tag
+      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      shell: bash
+    - name: install and setup conan
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-setup.ps1
+      shell: powershell
+    - name: create conan packages
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\build-windows.ps1 -ARCH x86 -BUILD_TYPE Release
+      shell: powershell
+    - name: deploy conan packages
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-deploy.ps1
+      shell: powershell
+
+  x86-Debug:
+    runs-on: windows-2019
+    env:
+      GITHUB_OS_NAME: windows
+      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
+    steps:
+    - uses: actions/checkout@master
+      with:
+        submodules: true
+        ref: ${{ github.sha }}
+    - name: get version from tag
+      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      shell: bash
+    - name: install and setup conan
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-setup.ps1
+      shell: powershell
+    - name: create conan packages
+      run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\build-windows.ps1 -ARCH x86 -BUILD_TYPE Debug
       shell: powershell
     - name: deploy conan packages
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-deploy.ps1
