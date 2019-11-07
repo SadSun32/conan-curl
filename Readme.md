@@ -1,5 +1,7 @@
 # Conan curl
 
+![GitHub Actions status | rgpaul/conan-curl-scripts](https://github.com/rgpaul/conan-curl-scripts/workflows/build/badge.svg)
+
 This repository contains the conan receipe that is used to build the curl packages at [rgpaul bintray](https://bintray.com/manromen/rgpaul).
 
 For Infos about curl please visit [curl.haxx.se](https://curl.haxx.se/).  

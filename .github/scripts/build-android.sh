@@ -2,7 +2,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # The MIT License (MIT)
 #
-# Copyright (c) 2019 Ralph-Gordon Paul. All rights reserved.
+# Copyright (c) 2018-2019 Ralph-Gordon Paul. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
 # documentation files (the "Software"), to deal in the Software without restriction, including without limitation the 
@@ -20,13 +20,10 @@
 
 set -e
 
+source ~/.profile
+
 #=======================================================================================================================
 # settings
-
-declare LIBRARY_VERSION=7.65.3
-
-declare CONAN_USER=rgpaul
-declare CONAN_CHANNEL=stable
 
 declare TOOLCHAIN_VERSION=clang
 # please check the compiler version of your ndk before building f.e.:
@@ -34,6 +31,10 @@ declare TOOLCHAIN_VERSION=clang
 declare COMPILER_VERSION=8.0
 declare COMPILER_LIBCXX=libc++
 declare STL_TYPE=c++_static
+declare ANDROID_NDK_PATH=$ANDROID_SDK_ROOT/ndk-bundle
+
+echo "using NDK Path: ${ANDROID_NDK_PATH}"
+export ANDROID_NDK_PATH=${ANDROID_NDK_PATH}
 
 #=======================================================================================================================
 
@@ -115,7 +116,7 @@ function createConanPackage()
     conan create . curl/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Android \
         -s os.api_level=${api_level} -s compiler=${TOOLCHAIN_VERSION} -s compiler.version=${COMPILER_VERSION} \
         -s compiler.libcxx=${COMPILER_LIBCXX} -s build_type=${build_type} -o android_ndk=${NDK_VERSION} \
-        -o android_stl_type=${STL_TYPE} -s arch=${arch} -o shared=False -o with_ldap=False
+        -o android_stl_type=${STL_TYPE} -s arch=${arch} -o shared=False
 }
 
 #=======================================================================================================================
