@@ -25,7 +25,7 @@ if [ "${GITHUB_OS_NAME}" == "linux" ]; then
 fi
 
 # login to conan bintray
-conan user -p "${BINTRAY_KEY}" -r "${CONAN_REPOSITORY_NAME}" "${BINTRAY_USER}"
+conan user -p "${CONAN_PWD}" -r "${CONAN_REPOSITORY_NAME}" "${CONAN_USER}"
 
 # upload all related packages
 conan upload "${CONAN_PACKAGE_NAME}/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL}" -r "${CONAN_REPOSITORY_NAME}" \

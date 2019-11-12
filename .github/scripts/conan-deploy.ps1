@@ -19,7 +19,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 # login to conan bintray
-& conan user -p "${env:BINTRAY_KEY}" -r "${env:CONAN_REPOSITORY_NAME}" "${env:BINTRAY_USER}"
+& conan user -p "${env:CONAN_PWD}" -r "${env:CONAN_REPOSITORY_NAME}" "${env:CONAN_USER}"
 
 # upload all related packages
 & conan upload "${env:CONAN_PACKAGE_NAME}/${env:LIBRARY_VERSION}@${env:CONAN_USER}/${env:CONAN_CHANNEL}" `

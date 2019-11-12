@@ -1,8 +1,7 @@
 name: Linux
 
 env:
-  BINTRAY_USER: manromen
-  CONAN_REPOSITORY: https://api.bintray.com/conan/manromen/rgpaul
+  CONAN_REPOSITORY: https://conan.rgpaul.com
   CONAN_REPOSITORY_NAME: rgpaul
   CONAN_PACKAGE_NAME: curl
   CONAN_USER: rgpaul
@@ -18,7 +17,7 @@ jobs:
     runs-on: ubuntu-18.04
     env:
       GITHUB_OS_NAME: linux
-      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
+      CONAN_PWD: ${{ secrets.CONAN_PWD }}
     steps:
     - uses: actions/checkout@master
       with:
@@ -37,7 +36,7 @@ jobs:
     runs-on: ubuntu-18.04
     env:
       GITHUB_OS_NAME: linux
-      BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
+      CONAN_PWD: ${{ secrets.CONAN_PWD }}
     steps:
     - uses: actions/checkout@master
       with:

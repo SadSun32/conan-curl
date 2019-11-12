@@ -1,12 +1,12 @@
-# Conan curl
-
 ![Android status](https://github.com/rgpaul/conan-curl-scripts/workflows/Android/badge.svg)
 ![iOS status](https://github.com/rgpaul/conan-curl-scripts/workflows/iOS/badge.svg)
 ![Linux status](https://github.com/rgpaul/conan-curl-scripts/workflows/Linux/badge.svg)
 ![macOS status](https://github.com/rgpaul/conan-curl-scripts/workflows/macOS/badge.svg)
 ![Windows status](https://github.com/rgpaul/conan-curl-scripts/workflows/Windows/badge.svg)
 
-This repository contains the conan receipe that is used to build the curl packages at [rgpaul bintray](https://bintray.com/manromen/rgpaul).
+# Conan curl
+
+This repository contains a conan receipe that can be used to build curl packages.
 
 For Infos about curl please visit [curl.haxx.se](https://curl.haxx.se/).  
 The library is licensed under the [curl License](https://curl.haxx.se/docs/copyright.html).  
