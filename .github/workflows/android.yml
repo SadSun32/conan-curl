@@ -29,21 +29,11 @@ jobs:
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: list dependencies for github cache key
-      run: |
-        source ${HOME}/.profile
-        conan info . -bo ALL > dependencies-info.txt
-        cat dependencies-info.txt
-    - name: Cache conan data
-      uses: actions/cache@v1
-      with:
-        path: ${HOME}/.conan/data
-        key: ${{ runner.OS }}-conan-android-armv7-19-release-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv7 19 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-      if: github.ref == 'master' # only deploy a master build
+      if: github.ref == 'refs/heads/master' # only deploy a master build
 
   armv7-Debug:
     runs-on: ubuntu-18.04
@@ -59,21 +49,11 @@ jobs:
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: list dependencies for github cache key
-      run: |
-        source ${HOME}/.profile
-        conan info . -bo ALL > dependencies-info.txt
-        cat dependencies-info.txt
-    - name: Cache conan data
-      uses: actions/cache@v1
-      with:
-        path: ${HOME}/.conan/data
-        key: ${{ runner.OS }}-conan-android-armv7-19-debug-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv7 19 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-      if: github.ref == 'master' # only deploy a master build
+      if: github.ref == 'refs/heads/master' # only deploy a master build
 
   armv8-Release:
     runs-on: ubuntu-18.04
@@ -89,21 +69,11 @@ jobs:
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: list dependencies for github cache key
-      run: |
-        source ${HOME}/.profile
-        conan info . -bo ALL > dependencies-info.txt
-        cat dependencies-info.txt
-    - name: Cache conan data
-      uses: actions/cache@v1
-      with:
-        path: ${HOME}/.conan/data
-        key: ${{ runner.OS }}-conan-android-armv8-21-release-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv8 21 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-      if: github.ref == 'master' # only deploy a master build
+      if: github.ref == 'refs/heads/master' # only deploy a master build
 
   armv8-Debug:
     runs-on: ubuntu-18.04
@@ -119,21 +89,11 @@ jobs:
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: list dependencies for github cache key
-      run: |
-        source ${HOME}/.profile
-        conan info . -bo ALL > dependencies-info.txt
-        cat dependencies-info.txt
-    - name: Cache conan data
-      uses: actions/cache@v1
-      with:
-        path: ${HOME}/.conan/data
-        key: ${{ runner.OS }}-conan-android-armv8-21-debug-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv8 21 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-      if: github.ref == 'master' # only deploy a master build
+      if: github.ref == 'refs/heads/master' # only deploy a master build
 
   x86-Release:
     runs-on: ubuntu-18.04
@@ -149,21 +109,11 @@ jobs:
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: list dependencies for github cache key
-      run: |
-        source ${HOME}/.profile
-        conan info . -bo ALL > dependencies-info.txt
-        cat dependencies-info.txt
-    - name: Cache conan data
-      uses: actions/cache@v1
-      with:
-        path: ${HOME}/.conan/data
-        key: ${{ runner.OS }}-conan-android-x86-19-release-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86 19 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-      if: github.ref == 'master' # only deploy a master build
+      if: github.ref == 'refs/heads/master' # only deploy a master build
 
   x86-Debug:
     runs-on: ubuntu-18.04
@@ -179,21 +129,11 @@ jobs:
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: list dependencies for github cache key
-      run: |
-        source ${HOME}/.profile
-        conan info . -bo ALL > dependencies-info.txt
-        cat dependencies-info.txt
-    - name: Cache conan data
-      uses: actions/cache@v1
-      with:
-        path: ${HOME}/.conan/data
-        key: ${{ runner.OS }}-conan-android-x86-19-debug-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86 19 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-      if: github.ref == 'master' # only deploy a master build
+      if: github.ref == 'refs/heads/master' # only deploy a master build
 
   x86_64-Release:
     runs-on: ubuntu-18.04
@@ -209,21 +149,11 @@ jobs:
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: list dependencies for github cache key
-      run: |
-        source ${HOME}/.profile
-        conan info . -bo ALL > dependencies-info.txt
-        cat dependencies-info.txt
-    - name: Cache conan data
-      uses: actions/cache@v1
-      with:
-        path: ${HOME}/.conan/data
-        key: ${{ runner.OS }}-conan-android-x86_64-21-release-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86_64 21 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-      if: github.ref == 'master' # only deploy a master build
+      if: github.ref == 'refs/heads/master' # only deploy a master build
 
   x86_64-Debug:
     runs-on: ubuntu-18.04
@@ -239,18 +169,8 @@ jobs:
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
-    - name: list dependencies for github cache key
-      run: |
-        source ${HOME}/.profile
-        conan info . -bo ALL > dependencies-info.txt
-        cat dependencies-info.txt
-    - name: Cache conan data
-      uses: actions/cache@v1
-      with:
-        path: ${HOME}/.conan/data
-        key: ${{ runner.OS }}-conan-android-x86_64-21-debug-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86_64 21 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
-      if: github.ref == 'master' # only deploy a master build
+      if: github.ref == 'refs/heads/master' # only deploy a master build
