@@ -19,8 +19,8 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 # login to conan bintray
-& conan user -p "${env:CONAN_PWD}" -r "${env:CONAN_REPOSITORY_NAME}" "${env:CONAN_USER}"
+& conan user -p "${env:CONAN_PWD}" -r "${env:CONAN_REPOSITORY_NAME}" "${env:CONAN_USERNAME}"
 
 # upload all related packages
-& conan upload "${env:CONAN_PACKAGE_NAME}/${env:LIBRARY_VERSION}@${env:CONAN_USER}/${env:CONAN_CHANNEL}" `
+& conan upload "${env:CONAN_PACKAGE_NAME}/${env:LIBRARY_VERSION}@${env:CONAN_USERNAME}/${env:CONAN_CHANNEL}" `
     -r "${env:CONAN_REPOSITORY_NAME}"  --all --confirm

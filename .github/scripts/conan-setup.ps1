@@ -28,6 +28,6 @@ Push-Location ${PSScriptRoot}
 & conan config install ../conan/config.zip
 
 # login to conan
-& conan user -p "${env:CONAN_PWD}" -r ${env:CONAN_REPOSITORY_NAME} ${env:CONAN_USER}
+& conan user -p "${env:CONAN_PWD}" -r ${env:CONAN_REPOSITORY_NAME} ${env:CONAN_USERNAME}
 
 Pop-Location

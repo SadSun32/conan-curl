@@ -4,7 +4,7 @@ env:
   CONAN_REPOSITORY: https://conan.rgpaul.com
   CONAN_REPOSITORY_NAME: rgpaul
   CONAN_PACKAGE_NAME: curl
-  CONAN_USER: rgpaul
+  CONAN_USERNAME: rgpaul
   CONAN_CHANNEL: stable
 
 on:
@@ -21,12 +21,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        submodules: true
+        submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
+    - name: list dependencies for github cache key
+      run: |
+        source ${HOME}/.profile
+        conan info . -bo ALL > dependencies-info.txt
+        cat dependencies-info.txt
+    - name: Cache conan data
+      uses: actions/cache@v1
+      with:
+        path: ${HOME}/.conan/data
+        key: ${{ runner.OS }}-conan-android-armv7-19-release-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv7 19 Release
     - name: deploy conan packages
@@ -40,12 +50,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        submodules: true
+        submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
+    - name: list dependencies for github cache key
+      run: |
+        source ${HOME}/.profile
+        conan info . -bo ALL > dependencies-info.txt
+        cat dependencies-info.txt
+    - name: Cache conan data
+      uses: actions/cache@v1
+      with:
+        path: ${HOME}/.conan/data
+        key: ${{ runner.OS }}-conan-android-armv7-19-debug-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv7 19 Debug
     - name: deploy conan packages
@@ -59,12 +79,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        submodules: true
+        submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
+    - name: list dependencies for github cache key
+      run: |
+        source ${HOME}/.profile
+        conan info . -bo ALL > dependencies-info.txt
+        cat dependencies-info.txt
+    - name: Cache conan data
+      uses: actions/cache@v1
+      with:
+        path: ${HOME}/.conan/data
+        key: ${{ runner.OS }}-conan-android-armv8-21-release-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv8 21 Release
     - name: deploy conan packages
@@ -78,12 +108,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        submodules: true
+        submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
+    - name: list dependencies for github cache key
+      run: |
+        source ${HOME}/.profile
+        conan info . -bo ALL > dependencies-info.txt
+        cat dependencies-info.txt
+    - name: Cache conan data
+      uses: actions/cache@v1
+      with:
+        path: ${HOME}/.conan/data
+        key: ${{ runner.OS }}-conan-android-armv8-21-debug-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv8 21 Debug
     - name: deploy conan packages
@@ -97,12 +137,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        submodules: true
+        submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
+    - name: list dependencies for github cache key
+      run: |
+        source ${HOME}/.profile
+        conan info . -bo ALL > dependencies-info.txt
+        cat dependencies-info.txt
+    - name: Cache conan data
+      uses: actions/cache@v1
+      with:
+        path: ${HOME}/.conan/data
+        key: ${{ runner.OS }}-conan-android-x86-19-release-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86 19 Release
     - name: deploy conan packages
@@ -116,12 +166,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        submodules: true
+        submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
+    - name: list dependencies for github cache key
+      run: |
+        source ${HOME}/.profile
+        conan info . -bo ALL > dependencies-info.txt
+        cat dependencies-info.txt
+    - name: Cache conan data
+      uses: actions/cache@v1
+      with:
+        path: ${HOME}/.conan/data
+        key: ${{ runner.OS }}-conan-android-x86-19-debug-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86 19 Debug
     - name: deploy conan packages
@@ -135,12 +195,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        submodules: true
+        submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
+    - name: list dependencies for github cache key
+      run: |
+        source ${HOME}/.profile
+        conan info . -bo ALL > dependencies-info.txt
+        cat dependencies-info.txt
+    - name: Cache conan data
+      uses: actions/cache@v1
+      with:
+        path: ${HOME}/.conan/data
+        key: ${{ runner.OS }}-conan-android-x86_64-21-release-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86_64 21 Release
     - name: deploy conan packages
@@ -154,12 +224,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        submodules: true
+        submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
+    - name: list dependencies for github cache key
+      run: |
+        source ${HOME}/.profile
+        conan info . -bo ALL > dependencies-info.txt
+        cat dependencies-info.txt
+    - name: Cache conan data
+      uses: actions/cache@v1
+      with:
+        path: ${HOME}/.conan/data
+        key: ${{ runner.OS }}-conan-android-x86_64-21-debug-${{ hashFiles('dependencies-info.txt') }}
     - name: create conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86_64 21 Debug
     - name: deploy conan packages
