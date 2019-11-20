@@ -7,9 +7,11 @@ env:
   CONAN_USERNAME: rgpaul
   CONAN_CHANNEL: stable
 
-on:
-  create:
-    ref_type: tag
+on: 
+  push:
+    branches:
+      - master
+      - develop
 
 jobs:
 
@@ -24,7 +26,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
       shell: bash
     - name: install and setup conan
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-setup.ps1
@@ -45,6 +47,7 @@ jobs:
     - name: deploy conan packages
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-deploy.ps1
       shell: powershell
+      if: github.ref == 'master' # only deploy a master build
 
   x86_64-Debug:
     runs-on: windows-latest
@@ -57,7 +60,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
       shell: bash
     - name: install and setup conan
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-setup.ps1
@@ -78,6 +81,7 @@ jobs:
     - name: deploy conan packages
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-deploy.ps1
       shell: powershell
+      if: github.ref == 'master' # only deploy a master build
 
   x86-Release:
     runs-on: windows-latest
@@ -90,7 +94,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
       shell: bash
     - name: install and setup conan
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-setup.ps1
@@ -111,6 +115,7 @@ jobs:
     - name: deploy conan packages
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-deploy.ps1
       shell: powershell
+      if: github.ref == 'master' # only deploy a master build
 
   x86-Debug:
     runs-on: windows-latest
@@ -123,7 +128,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
       shell: bash
     - name: install and setup conan
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-setup.ps1
@@ -144,3 +149,4 @@ jobs:
     - name: deploy conan packages
       run: powershell -File ${env:GITHUB_WORKSPACE}\.github\scripts\conan-deploy.ps1
       shell: powershell
+      if: github.ref == 'master' # only deploy a master build

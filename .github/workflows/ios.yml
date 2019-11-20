@@ -7,9 +7,11 @@ env:
   CONAN_USERNAME: rgpaul
   CONAN_CHANNEL: stable
 
-on:
-  create:
-    ref_type: tag
+on: 
+  push:
+    branches:
+      - master
+      - develop
 
 jobs:
   
@@ -25,7 +27,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -41,6 +43,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-ios.sh armv8 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   Device-Debug:
     runs-on: macos-latest
@@ -54,7 +57,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -70,6 +73,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-ios.sh armv8 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   Simulator:
     runs-on: macos-latest
@@ -83,7 +87,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -99,3 +103,4 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-ios.sh x86_64 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build

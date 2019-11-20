@@ -7,9 +7,11 @@ env:
   CONAN_USERNAME: rgpaul
   CONAN_CHANNEL: stable
 
-on:
-  create:
-    ref_type: tag
+on: 
+  push:
+    branches:
+      - master
+      - develop
 
 jobs:
 
@@ -24,7 +26,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -41,6 +43,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv7 19 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   armv7-Debug:
     runs-on: ubuntu-18.04
@@ -53,7 +56,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -70,6 +73,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv7 19 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   armv8-Release:
     runs-on: ubuntu-18.04
@@ -82,7 +86,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -99,6 +103,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv8 21 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   armv8-Debug:
     runs-on: ubuntu-18.04
@@ -111,7 +116,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -128,6 +133,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh armv8 21 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   x86-Release:
     runs-on: ubuntu-18.04
@@ -140,7 +146,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -157,6 +163,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86 19 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   x86-Debug:
     runs-on: ubuntu-18.04
@@ -169,7 +176,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -186,6 +193,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86 19 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   x86_64-Release:
     runs-on: ubuntu-18.04
@@ -198,7 +206,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -215,6 +223,7 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86_64 21 Release
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
 
   x86_64-Debug:
     runs-on: ubuntu-18.04
@@ -227,7 +236,7 @@ jobs:
         submodules: recursive
         ref: ${{ github.sha }}
     - name: get version from tag
-      run: echo ::set-env name=LIBRARY_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-setup.sh
     - name: list dependencies for github cache key
@@ -244,3 +253,4 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/scripts/build-android.sh x86_64 21 Debug
     - name: deploy conan packages
       run: ${GITHUB_WORKSPACE}/.github/scripts/conan-deploy.sh
+      if: github.ref == 'master' # only deploy a master build
