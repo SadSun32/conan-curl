@@ -62,6 +62,7 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
         cmake.definitions["ANDROID_TOOLCHAIN"] = "clang"
         cmake.definitions["BUILD_TESTING"] = "OFF"
         cmake.definitions["BUILD_CURL_EXE"] = "OFF"
+        cmake.definitions["CMAKE_USE_LIBSSH2"] = "OFF"
         tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
             "find_package(OpenSSL", "find_host_package(OpenSSL")
         self.addFindHostPackage()
@@ -71,6 +72,7 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
         cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = ios_toolchain
         cmake.definitions["BUILD_TESTING"] = "OFF"
         cmake.definitions["BUILD_CURL_EXE"] = "OFF"
+        cmake.definitions["CMAKE_USE_LIBSSH2"] = "OFF"
         #cmake.definitions["PICKY_COMPILER"] = "OFF"
         tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
             "find_package(OpenSSL", "find_host_package(OpenSSL")
@@ -90,9 +92,11 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
 
     def applyCmakeSettingsFormacOS(self, cmake):
         cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
+        cmake.definitions["CMAKE_USE_LIBSSH2"] = "OFF"
 
     def applyCmakeSettingsForWindows(self, cmake):
         cmake.definitions["CMAKE_BUILD_TYPE"] = self.settings.build_type
+        cmake.definitions["CMAKE_USE_LIBSSH2"] = "OFF"
         if self.settings.compiler == "Visual Studio":
             # check that runtime flags and build_type correspond (consistency check)
             if "d" not in self.settings.compiler.runtime and self.settings.build_type == "Debug":
