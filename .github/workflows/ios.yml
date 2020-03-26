@@ -26,6 +26,10 @@ jobs:
       with:
         submodules: recursive
         ref: ${{ github.sha }}
+    - name: fetch all tags and all history for all tags and branches
+      run: |
+        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+        git fetch --prune --unshallow
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
@@ -47,6 +51,10 @@ jobs:
       with:
         submodules: recursive
         ref: ${{ github.sha }}
+    - name: fetch all tags and all history for all tags and branches
+      run: |
+        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+        git fetch --prune --unshallow
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
@@ -68,6 +76,10 @@ jobs:
       with:
         submodules: recursive
         ref: ${{ github.sha }}
+    - name: fetch all tags and all history for all tags and branches
+      run: |
+        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+        git fetch --prune --unshallow
     - name: get version from tag
       run: echo ::set-env name=LIBRARY_VERSION::$(git describe --abbrev=0 --tags)
     - name: install and setup conan
