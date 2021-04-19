@@ -127,7 +127,7 @@ endmacro (find_host_package)
 ''')
 
     def requirements(self):
-        self.requires("libressl/2.9.2@%s/%s" % (self.user, self.channel))
+        self.requires("libressl/3.2.5@%s/%s" % (self.user, self.channel))
 
     def configure(self):
         if self.settings.os == "Android":
