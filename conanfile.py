@@ -11,7 +11,6 @@ class CurlConan(ConanFile):
     description = "Command line tool and library for transferring data with URLs"
     url = "https://github.com/RGPaul/conan-curl-scripts"
     license = "curl"
-    exports_sources = "cmake-modules/*"
     generators = "cmake_paths"
 
     # download sources
@@ -68,27 +67,29 @@ message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
         self.addFindHostPackage()
 
     def applyCmakeSettingsForiOS(self, cmake):
-        ios_toolchain = "cmake-modules/Toolchains/ios.toolchain.cmake"
-        cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = ios_toolchain
+        cmake.definitions["CMAKE_SYSTEM_NAME"] = "iOS"
+        cmake.definitions["DEPLOYMENT_TARGET"] = "10.0"
+        cmake.definitions["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.0"
+        cmake.definitions["CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH"] = "NO"
+        cmake.definitions["CMAKE_IOS_INSTALL_COMBINED"] = "YES"
+
         cmake.definitions["BUILD_TESTING"] = "OFF"
         cmake.definitions["BUILD_CURL_EXE"] = "OFF"
         cmake.definitions["CMAKE_USE_LIBSSH2"] = "OFF"
         #cmake.definitions["PICKY_COMPILER"] = "OFF"
+        
+        # CMAKE_TOOLCHAIN_FILE needs to be defined, so that the scripts of curl know that we are cross compiling
+        cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = ""
+
         tools.replace_in_file("%s/curl-%s/CMakeLists.txt" % (self.source_folder, self.version),
             "find_package(OpenSSL", "find_host_package(OpenSSL")
+        self.addFindHostPackage()
         
         # define all architectures for ios fat library
         if "arm" in self.settings.arch:
-            cmake.definitions["ARCHS"] = "armv7;armv7s;arm64;arm64e"
+            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = "armv7;armv7s;arm64;arm64e"
         else:
-            cmake.definitions["ARCHS"] = tools.to_apple_arch(self.settings.arch)
-
-        if self.settings.arch == "x86":
-            cmake.definitions["PLATFORM"] = "SIMULATOR"
-        elif self.settings.arch == "x86_64":
-            cmake.definitions["PLATFORM"] = "SIMULATOR64"
-        else:
-            cmake.definitions["PLATFORM"] = "OS"
+            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
 
     def applyCmakeSettingsFormacOS(self, cmake):
         cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
